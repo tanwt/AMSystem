@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+
+<mapper namespace="com.dao.UserDao" >
+
+   <sql id="userSelect">
+      am_user_id userId,am_user_name userName,am_user_password userPassWord,am_user_sex userSex,am_user_marriage userMarriage,
+      am_user_phone userPhone,am_user_mail userMail,am_user_department userDepartment,am_user_status userState
+   </sql>
+   
+   <!--用户注册-->
+   <insert id="userRegister" parameterType="com.bean.User">
+      INSERT INTO am_user(am_user_name,am_user_password,am_user_sex,am_user_marriage,am_user_phone,am_user_mail,am_user_department)
+      VALUE (#{user.userName},#{user.userPassWord},#{user.userSex},#{user.userMarriage},#{user.userPhone},#{user.userMail},#{user.userDepartment});
+   </insert>
+
+   <!--查询用户信息-->
+   <select id="selectUserByNameOREmailORId" parameterType="com.bean.User" resultType="com.bean.User" >
+      SELECT <include refid="userSelect"/>
+      FROM am_user
+      WHERE am_user_name = #{user.userName} OR am_user_mail = #{user.userMail} OR am_user_id = #{user.userId} OR am_user_phone = #{user.userPhone}
+   </select>
+
+   <!-- 更新用户信息 -->
+   <update id="updateUserById" parameterType="com.bean.User">
+      update am_user
+      set am_user_name=#{user.userName},am_user_password=#{user.userPassWord},am_user_sex=#{user.userSex},am_user_marriage=#{user.userMarriage},am_user_phone=#{user.userPhone},am_user_mail=#{user.userMail},am_user_department=#{user.userDepartment},am_user_status=#{user.userState}
+	  where am_user_id=#{user.userId}
+   </update>
+
+   <!-- 用户登录 -->
+   <select id="userLogin" parameterType="java.lang.String" resultType="com.bean.User">
+      SELECT <include refid="userSelect"/>
+      FROM am_user WHERE (am_user_name=#{loginName} OR am_user_mail=#{loginName} OR am_user_phone=#{loginName}) AND am_user_password=#{password}
+   </select>
+
+   <select id="getUserIDByDepartment" parameterType="java.lang.String" resultType="com.bean.User">
+      SELECT <include refid="userSelect"/>
+      FROM am_user WHERE am_user_department=#{department}
+   </select>
+</mapper>
